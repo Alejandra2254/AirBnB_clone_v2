@@ -1,4 +1,3 @@
-.
 #!/usr/bin/python3
 """Console Test Module"""
 import unittest
