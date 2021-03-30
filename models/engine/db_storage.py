@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ Engine to handle objects with ORM SQLAlchemy """
 
-import models
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.amenity import Amenity
@@ -9,12 +8,11 @@ from models.city import City
 from models.place import Place
 from models.review import Review
 from models.state import State
-import sqlalchemy
 from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from os import getenv
-
+classes = [State, City, User, Review, Place]
 
 class DBStorage:
     """ SQLAlchemy database storage class """
@@ -23,10 +21,10 @@ class DBStorage:
     __session = None
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+        'User': User, 'Place': Place, 'State': State,
+        'City': City,  # 'Amenity': Amenity,
+        'Review': Review
+    }
 
     def __init__(self):
         """ DBStorage: Instantance initialization """
@@ -44,18 +42,20 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """query on the current database session, depending of class name"""
-        dict_obj = {}
+        """query on the current database session depending of the class name"""
+
+        objs_dict = {}
         if cls:
-            my_query = self.__session.query(eval(cls.__name__)).all()
+            my_query = self.__session.query(cls).all()
             for obj in my_query:
-                dict_obj[cls.__name__ + '.' + obj.id] = obj
+                objs_dict[cls + "." + obj.id] = obj
         else:
             for key, value in self.classes.items():
-                my_query = self.__session.query(eval(cls)).all()
+                my_query = self.__session.query(value).all()
                 for obj in my_query:
-                    dict_obj[key + '.' + obj.id] = obj
-        return dict_obj
+                    objs_dict[key + "." + obj.id] = obj
+
+        return objs_dict
 
     def new(self, obj):
         """ Adds the object to the current SQL session """
