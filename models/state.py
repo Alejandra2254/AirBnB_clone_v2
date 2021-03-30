@@ -10,16 +10,15 @@ from os import getenv
 class State(BaseModel):
     """ State class """
     __tablename__ = 'states'
-    if getenv("HBNB_TYPE_STORAGE") == "db"
-        name = Colum(String(128), nullable=False)
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        name = Column(String(128), nullable=False)
         cities = relationship('City', backref='state', cascade='all,delete')
     else:
         @property
         def cities(self):
-        """Getter for cities from the same state"""
-        self_cities = []
-        for key, val in models.storage.all().items():
-            if val.__class__.__name__ == 'City'
-                    and val.state._id == self.id:
-                self_cities.append(val)
-        return self_cities
+            """Getter for cities from the same state"""
+            self_cities = []
+            for key, val in models.storage.all().items():
+                if val.__class__.__name__ == 'City' and val.state._id == self.id:
+                    self_cities.append(val)
+            return self_cities
