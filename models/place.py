@@ -10,8 +10,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 
 class Place(BaseModel):
     """ A place to stay """
-	__tablename__ = 'places'
-	if getenv("HBNB_TYPE_STORAGE") == "db":
+    __tablename__ = 'places'
+    if getenv("HBNB_TYPE_STORAGE") == "db":
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
         name = Column(String(128), nullable=False)
@@ -29,14 +29,23 @@ class Place(BaseModel):
 
     else:
         city_id = ""
-		user_id = ""
-		name = ""
-		description = ""
-		number_rooms = 0
-		number_bathrooms = 0
-		max_guest = 0
-		price_by_night = 0
-		latitude = 0.0
-		longitude = 0.0
-		amenity_ids = []
+        user_id = ""
+        name = ""
+        description = ""
+        number_rooms = 0
+        number_bathrooms = 0
+        max_guest = 0
+        price_by_night = 0
+        latitude = 0.0
+        longitude = 0.0
+        amenity_ids = []
 
+        @property
+        def reviews(self):
+            """Getter of reviews attribute"""
+            reviews_dict = models.storage.all(Review)
+            reviews_list = []
+            for review in reviews_dict.values():
+                if (review.place_id == self.id):
+                    reviews_list.append(review)
+            return reviews_list
