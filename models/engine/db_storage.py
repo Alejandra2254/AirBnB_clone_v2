@@ -69,6 +69,7 @@ class DBStorage:
         """ Deletes the object from the current SQL session """
         if obj:
             self.__session.delete(obj)
+            self.__session.commit()
 
     def reload(self):
         """ Creates the current database session and all its tables """

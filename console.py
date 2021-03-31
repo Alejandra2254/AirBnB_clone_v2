@@ -10,6 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -115,34 +116,44 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        try:
-            if not args:
-                raise SyntaxError()
-            parameters = args.split(" ")
-            if parameters[0] not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            new_instance = HBNBCommand.classes[parameters[0]]()
-            storage.save()
-            for n_param in parameters[1:]:
-                n_param = n_param.split("=")
-                key_p = n_param[0]
-                value_p = n_param[1]
-                if '_' in value_p:
-                    value_p = value_p.replace('_', ' ')
-                if '"' in value_p:
-                    value_p = value_p.replace('"', '')
-                elif '.' in value_p:
-                    value_p = float(value_p)
-                else:
-                    value_p = int(value_p)
-                setattr(new_instance, key_p, value_p)
-            storage.save()
-            print(new_instance.id)
-            storage.save()
-        except SyntaxError:
-            print("** class name missing **")
+        new_args = {}
+        listof_args = args.split()
+        valid_params = {}
+        for n_arg in listof_args[1:]:
+            n_arg = n_arg.split("=")
+            new_args[n_arg[0]] = n_arg[1]
 
+        if not listof_args:
+            print("** class name missing **")
+            return
+
+        if listof_args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
+        for key, value in new_args.items():
+            is_str = re.search('^"(.*)"$', value)
+            if is_str:
+                to_cast = str
+                value = is_str.group(1)
+                value = value.replace('_', ' ')
+                value = re.sub(r'(?<!\\)"', r'\\"', value)
+            else:
+                if "." in value:
+                    to_cast = float
+                else:
+                    to_cast = int
+            try:
+                value = to_cast(value)  # "4.56" float("4.56")
+            except ValueError:
+                continue
+            valid_params[key] = value
+    
+        new_instance = HBNBCommand.classes[listof_args[0]](**valid_params)
+        storage.new(new_instance)
+        print(new_instance.id)
+        storage.save()
+    
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
