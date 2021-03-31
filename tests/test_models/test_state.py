@@ -13,7 +13,7 @@ class test_state(test_basemodel):
         super().__init__(*args, **kwargs)
         self.name = "State"
         self.value = State
-    
+
     @unittest.skip("demonstrating skipping")
     def test_nothing(self):
         self.fail("shouldn't happen")
