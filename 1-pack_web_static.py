@@ -12,7 +12,7 @@ def do_pack():
         local("mkdir -p versions")
         name = "web_static_" + date + ".tgz"
         path = "versions/" + name 
-        local("tar -cvfz {} web_static".format(path))
+        local("tar -cvzf {} web_static".format(path))
         return path
     except:
         return None
