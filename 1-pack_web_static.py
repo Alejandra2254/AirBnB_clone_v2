@@ -5,6 +5,7 @@ import datetime
 
 
 def do_pack():
+    """function"""
     try:
         now = datetime.datetime.now()
         date = now.strftime('%Y%m%d%H%M%S')
