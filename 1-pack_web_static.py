@@ -9,8 +9,9 @@ def do_pack():
     try:
         now = datetime.datetime.now()
         date = now.strftime('%Y%m%d%H%M%S')
-        name = "versions/web_static_" + date + ".tgz"
-        local("tar -cvfz {} web_static".format(name))
+        local("mkdir -p versions")
+        name = "web_static_" + date + ".tgz"
+        local("tar -cvfz versions/{} web_static".format(name))
         return name
     except:
         return None
