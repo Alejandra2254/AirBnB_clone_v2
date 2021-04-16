@@ -1,30 +1,44 @@
 #!/usr/bin/python3
-"""script that generates a .tgz archive"""
-from fabric.api import env, put, run
-from os import path
+"""Fabric script that generates a .tgz archive from the contents of the
+ web_static folder of your AirBnB Clone repo, using the function do_pack."""
+
+from fabric.api import *
+from datetime import datetime
+import os
 
 env.hosts = ['35.227.57.154', '35.227.63.112']
 
+
+def do_pack():
+    try:
+        formato = "%Y%m%dT%H%M%S"
+        created_at = date_now.created_at.strftime(formato)
+        local("mkdir -p /versions")
+        file_tgz = "web_static_{}.tgz".format(created_at)
+        local("tar -cvzf versions/{}.tgz web_static".format(file_tgz))
+        return file_tgz
+    except:
+        return None
+
+
 def do_deploy(archive_path):
-    if path.exists(archive_path) is False:
+    if os.path.isfile(archive_path) is False:
         return False
     try:
-        #Upload the archive to the /tmp/ directory 
         put(archive_path, "/tmp")
-        # Uncompress the archive to the folder
-        no_extension = archive_path.split(".")
-        run("mkdir -p /data/web_static/releases/{}".format(no_extension[0]))
-        run("tar -xzf /tmp/{} -C /data/web_static/releases/{}".format(archive_path, archive_path))
-        # Delete the archive from the web server
-        run("rm /tmp/{}".format(archive_path))
-        # Delete the symbolic link /data/web_static/current from the web server
-        run("mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(archive_path, archive_path))
-        run("rm -rf /data/web_static/releases/{}/web_static".format(archive_path))
+        id_file = archive_path.split("_")
+        id_final = id_file[2][:-4]
+        folder = "/data/web_static/releases/"
+        run("mkdir -p {}web_static_{}/".format(folder, id_final))
+        run("tar -xzf /tmp/web_static_{}.tgz -C {}web_static_{}/"
+            .format(id_final, folder, id_final))
+        run("rm /tmp/web_static_{}.tgz".format(id_final))
+        run("mv {}web_static_{}/web_static/* {}web_static_{}/"
+            .format(folder, id_final, folder, id_final))
+        run("rm -rf {}web_static_{}/web_static".format(folder, id_final))
         run("rm -rf /data/web_static/current")
-        # Create a new the symbolic link /data/web_static/current on the web server,
-        # linked to the new version of your code
-        run("ln -s /data/web_static/releases/{}/ /data/web_static/current".format(archive_path))
+        run("ln -s {}web_static_{}/ /data/web_static/current"
+            .format(folder, id_final))
         return True
     except:
         return False
-
