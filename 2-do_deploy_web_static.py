@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """script that generates a .tgz archive"""
-from fabric.api import put, run
+from fabric.api import env, put, run
 from os import path
 
 env.hosts = ['35.227.57.154', '35.227.63.112']
