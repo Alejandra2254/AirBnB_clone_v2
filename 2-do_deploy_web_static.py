@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 """script that generates a .tgz archive"""
-from fabric.api import local
+from fabric.api import put, run
 from os import path
+
+env.hosts = ['35.227.57.154', '35.227.63.112']
 
 def do_deploy(archive_path):
     if path.exists(archive_path) is False:
