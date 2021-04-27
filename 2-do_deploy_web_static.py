@@ -2,22 +2,21 @@
 """Fabric script that generates a .tgz archive from the contents of the
  web_static folder of your AirBnB Clone repo, using the function do_pack."""
 
-from fabric.api import *
+from fabric.api import put, run, env
 from datetime import datetime
 import os
 
-env.hosts = ['35.227.57.154', '35.227.63.112']
+env.hosts = ['35.231.124.90', '34.73.164.166']
 
 
 def do_pack():
     try:
-        formato = "%Y%m%dT%H%M%S"
-        created_at = date_now.created_at.strftime(formato)
+        created_at = date_now.created_at.strftime("%Y%m%d%H%M%S")
         local("mkdir -p /versions")
         file_tgz = "web_static_{}.tgz".format(created_at)
         local("tar -cvzf versions/{}.tgz web_static".format(file_tgz))
         return file_tgz
-    except:
+    except Exception:
         return None
 
 
@@ -40,5 +39,5 @@ def do_deploy(archive_path):
         run("ln -s {}web_static_{}/ /data/web_static/current"
             .format(folder, id_final))
         return True
-    except:
+    except Exception:
         return False
