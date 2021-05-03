@@ -52,6 +52,40 @@ def show_subpath(subpath):
 ```
 
 ## What is a template
+
+emplate is a class of String module. It allows for data to change without having to edit the application. It can be modified with subclasses.
+
 ## How to create a HTML response in Flask by using a template
+<h1 align=center>Rendering Templates </h1>
+Generating HTML from within Python is not fun, and actually pretty cumbersome because you have to do the HTML escaping on your own to keep the application secure. Because of that Flask configures the Jinja2 template engine for you automatically.
+
+To render a template you can use the render_template() method. All you have to do is provide the name of the template and the variables you want to pass to the template engine as keyword arguments. Here’s a simple example of how to render a template:
+
+```
+from flask import render_template
+
+@app.route('/hello/')
+@app.route('/hello/<name>')
+def hello(name=None):
+    return render_template('hello.html', name=name)
+```
+```
+/application.py
+/templates
+    /hello.html
+```
+
 ## How to create a dynamic template (loops, conditions…)
+For templates you can use the full power of Jinja2 templates. Head over to the official Jinja2 Template Documentation for more information.
+
+Here is an example template:
+```
+<!doctype html>
+<title>Hello from Flask</title>
+{% if name %}
+  <h1>Hello {{ name }}!</h1>
+{% else %}
+  <h1>Hello, World!</h1>
+{% endif %}
+```
 ## How to display in HTML data from a MySQL database
