@@ -1,6 +1,11 @@
 from flask import Flask
-app = Flask(__name__) #una instancia de la clase, flask sabra donde buscar plantillas
+app = Flask(__name__)
 
-@app.route('/', strict_slashes=False) # route le dice a flask que URL desencadenara la funcion
+
+@app.route('/', strict_slashes=False)
 def hello():
+    """Function hello"""
     return 'Hello HBNB!'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
