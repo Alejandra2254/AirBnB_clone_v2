@@ -34,6 +34,7 @@ def number(n):
     """Only if n is int"""
     return '{} is a number'.format(n)
 
+
 @app.route('/number_template/<int:n>/', strict_slashes=False)
 def is_a_number_template(n):
     """
